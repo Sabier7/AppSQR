@@ -1,114 +1,85 @@
-/**
- *autor @Sabier7
- */
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
+import axios from 'axios';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [ordenDeTrabajo, setOrdenDeTrabajo] = useState('');
+  const [mecanico, setMecanico] = useState(false);
+  const [electrico, setElectrico] = useState(false);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const agregarCliente = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/cliente', {
+        nombre,
+        telefono,
+        ordenDeTrabajo: parseInt(ordenDeTrabajo),
+        mecanico,
+        electrico,
+      });
+  
+      console.log('Cliente agregado con éxito:', response.data);
+    } catch (error) {
+      console.error('Error al agregar cliente:', error);
+    }
+  };
+  
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <Text>Nombre:</Text>
+      <TextInput
+        style={styles.input}
+        value={nombre}
+        onChangeText={(text) => setNombre(text)}
+      />
+
+      <Text>Teléfono:</Text>
+      <TextInput
+        style={styles.input}
+        value={telefono}
+        onChangeText={(text) => setTelefono(text)}
+        keyboardType="numeric"
+      />
+
+      <Text>Orden de Trabajo:</Text>
+      <TextInput
+        style={styles.input}
+        value={ordenDeTrabajo}
+        onChangeText={(text) => setOrdenDeTrabajo(text)}
+        keyboardType="numeric"
+      />
+
+      <Text>Mecánico:</Text>
+      <CheckBox
+        value={mecanico}
+        onValueChange={(newValue) => setMecanico(newValue)}
+      />
+
+      <Text>Eléctrico:</Text>
+      <CheckBox
+        value={electrico}
+        onValueChange={(newValue) => setElectrico(newValue)}
+      />
+
+      <Button title="Agregar Cliente" onPress={agregarCliente} />
+
     </View>
   );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  input: {
+    width: 200,
+    borderWidth: 1,
+    marginBottom: 10,
   },
 });
 
